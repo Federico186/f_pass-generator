@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generatore Password TecnoFerrari</title>
+    <!-- Configurazione PWA per iOS -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <!-- Carica Tailwind CSS per lo stile -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-title" content="TF Pass">
+    <style>
+        /* Stili per adattare l'app all'intero schermo del telefono */
+        html, body {
+            height: 100%;
+            margin: 0;
+            font-family: ui-sans-serif, system-ui;
+        }
+
+        #dateDisplay {
+            white-space: pre-line; /* Questo dice al browser di rispettare gli invii a capo */
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center; 
+            padding-top: 5rem; /* Spazio per i pulsanti di navigazione fissi */
+            
+            /* Sfondo locale (richiede il file 'sfondo.jpg' nella stessa cartella) */
+            background-image: url('sedeTecnoFerrari.jpg'); 
+            background-size: cover; 
+            background-position: center; 
+            background-attachment: fixed; 
+        }
+        
+        .card-bg {
+             background-color: rgba(255, 255, 255, 0.95); /* Leggermente più opaco per leggibilità */
+             backdrop-filter: blur(5px); 
+        }
+
+        .copy-button {
+            transition: transform 0.1s, background-color 0.1s;
+        }
+
+        .copy-button:active {
+            transform: scale(0.95);
+        }
+
+        /* Stili per le password */
+        .password-display {
+             font-size: 1.5rem; /* leggermente più piccolo per evitare overflow su schermi piccoli */
+             letter-spacing: 0.05em;
+             min-height: 44px; /* Per evitare salti di layout */
+        }
+
+        /* Stile per i pulsanti di navigazione (fissi in alto) */
+        .tab-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 10;
+            background-color: #10b981; /* Verde smeraldo scuro */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: flex;
+        }
+        
+        .tab-button {
+            flex-grow: 1;
+            padding: 1rem;
+            text-align: center;
+            font-weight: 500;
+            color: #d1fae5; /* Testo verde chiaro */
+            cursor: pointer;
+            border-bottom: 1px solid transparent;
+            transition: all 0.2s ease-in-out;
+        }
+        
+        /* Stile per il pulsante attivo */
+        .tab-button.active {
+            font-size: large;
+            color: #ffffff; /* Testo bianco */
+            background-color: #059669; /* Verde medio */
+            border-bottom: 5px solid #fcd34d; /* Linea gialla sotto */
+        }
+        .title {
+            font-size: xx-large;
+            font-weight: bolder;
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+            color: brown;
+        }
+    </style>
+</head>
+
+<body onload="updatePasswordDisplay()">
+
+    <!-- INSERIMENTO PIN -->
+    <div id="pin-screen" style="display: none;" class="fixed inset-0 z-[100] bg-emerald-900 flex flex-col items-center justify-center p-6 text-white">
+        <img src="logoTecnoFerrari.jpg" class="w-32 mb-8 rounded-2xl shadow-lg">
+        <h2 class="text-2xl font-bold mb-4">Accesso Protetto</h2>
+        <input type="password" id="pin-input" inputmode="numeric" 
+            class="w-48 p-4 text-center text-3xl text-black rounded-xl mb-6" placeholder="****">
+        <button onclick="checkPin()" class="bg-emerald-500 py-3 px-10 rounded-full font-bold shadow-lg">SBLOCCA</button>
+        <p id="pin-error" class="mt-4 text-red-400 opacity-0">PIN Errato</p>
+    </div>
+
+    <!-- TASTO GENERA PASSWORD -->
+    <div id="welcome-screen" style="display: none;" class="fixed inset-0 z-[90] bg-gray-100 flex flex-col items-center justify-center p-6" style="display: none;">
+        <div class="card-bg p-8 rounded-3xl shadow-xl text-center max-w-sm border-b-4 border-emerald-500">
+            <h1 class="text-2xl font-bold text-gray-800 mb-2">Benvenuto</h1>       
+            <button onclick="goToMainPage()" 
+                    class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold py-4 px-8 rounded-2xl shadow-blue-200 shadow-lg transition-all active:scale-95 text-xl">
+                GENERA PASSWORD
+            </button>
+        </div>
+    </div>
+
+    <!-- BARRA DI NAVIGAZIONE A TASTI FISSI -->
+    <div class="tab-bar">
+        <div class="tab-button active" onclick="showPage('page-first', this)" id="btn-page-first">Prima Edizione</div>
+        <div class="tab-button" onclick="showPage('page-second', this)" id="btn-page-second">Seconda Edizione</div>
+    </div>
+
+    <div class="container p-4 pb-10">
+        <!-- Struttura della Card Base -->
+        <div class="card-bg p-6 md:p-10 rounded-3xl shadow-2xl w-full max-w-sm text-center border-t-8 border-emerald-500">
+            
+            <img src="logoTecnoFerrari.jpg">
+            <!--<h1 class="text-3xl font-extrabold text-emerald-700 mb-2">Password</h1>-->
+            <!--<h1 class="text-3xl font-extrabold text-blue-700 mb-2">Password</h1>-->
+            <h1 class="title">Password</h1>
+
+            <!-- Sezione Data (Visibile su entrambe le pagine) -->
+            <div class="flex items-center justify-center gap-3 mb-6">
+                <div class="relative">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    <input type="datetime-local" id="manualDate" onchange="updateFromManual()" 
+                        class="absolute inset-0 opacity-0 cursor-pointer">
+                </div>
+                
+                <p class="text-lg text-gray-600 font-semibold" id="dateDisplay">Caricamento...</p>
+            </div>
+            
+            <!-- PAGINA 1: PRIMA EDIZIONE -->
+            <div id="page-first" class="page-content w-full" style="display: block;">
+                <h2 class="text-xl font-bold text-gray-800 mb-4 text-center">Chiave 1 (Prima Edizione)</h2>
+                <div class="space-y-4">
+                    
+                    <!-- PASSWORD 4 - PRIMA EDIZIONE -->
+                    <label class="block text-sm font-medium text-gray-700 mb-1 text-left">Password 4 (Data):</label>
+                    <div class="relative bg-gray-100 p-3 rounded-xl border-2 border-gray-300 shadow-inner">     
+                        <span id="password_4_Display_first" class="password-display font-mono font-bold text-gray-800 break-all select-all"></span>
+                    </div>
+
+                    <!-- PASSWORD 5 - PRIMA EDIZIONE -->
+                     <div class="admin-only">
+                        <label class="block text-sm font-medium text-gray-700 mb-1 text-left">Password 5 (Data+Ora):</label>
+                        <div class="relative bg-gray-100 p-3 rounded-xl border-2 border-gray-300 shadow-inner">     
+                            <span id="password_5_Display_first" class="password-display font-mono font-bold text-gray-800"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pulsante Copia Chiave 1 -->
+                <!--<button onclick="copyPasswords('password_4_Display_first', 'password_5_Display_first', 'Chiave Prima Edizione')"
+                        class="copy-button w-full mt-6 p-3 bg-emerald-500 text-white font-bold rounded-lg hover:bg-emerald-600 transition duration-150 shadow-lg">
+                    Copia Chiave 1
+                </button>-->
+            </div>
+
+            <!-- PAGINA 2: SECONDA EDIZIONE -->
+            <div id="page-second" class="page-content w-full" style="display: none;">
+                <h2 class="text-xl font-bold text-gray-800 mb-4 text-center">Chiave 2 (Seconda Edizione)</h2>
+                <div class="space-y-4">
+                    
+                    <!-- PASSWORD 4 - SECONDA EDIZIONE -->
+                    <label class="block text-sm font-medium text-gray-700 mb-1 text-left">Password 4 (Servizio):</label>
+                    <div class="relative bg-gray-100 p-3 rounded-xl border-2 border-gray-300 shadow-inner">     
+                        <span id="password_4_Display_second" class="password-display font-mono font-bold text-gray-800 break-all select-all"></span>
+                    </div>
+
+                    <!-- PASSWORD 5 - SECONDA EDIZIONE -->
+                    <div class="admin-only">
+                        <label class="block text-sm font-medium text-gray-700 mb-1 text-left">Password 5 (Servizio):</label>
+                        <div class="relative bg-gray-100 p-3 rounded-xl border-2 border-gray-300 shadow-inner">     
+                            <span id="password_5_Display_second" class="password-display font-mono font-bold text-gray-800"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pulsante Copia Chiave 2 -->
+                 <!--<button onclick="copyPasswords('password_4_Display_second', 'password_5_Display_second', 'Chiave Seconda Edizione')"
+                        class="copy-button w-full mt-6 p-3 bg-emerald-500 text-white font-bold rounded-lg hover:bg-emerald-600 transition duration-150 shadow-lg">
+                    Copia Chiave 2
+                </button>-->
+            </div>
+            
+            <!-- Messaggio di Conferma Copia -->
+            <p id="copyMessage" class="text-sm text-emerald-600 font-semibold mt-4 opacity-0 transition duration-300">Copiata negli appunti!</p>
+            
+            <!-- Istruzioni PWA per l'Installazione su iOS -->
+            <div id="installInstructions" class="mt-8 p-3 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 rounded-lg text-xs text-left hidden">
+                <p class="font-semibold mb-1">Passo Importante (Solo la prima volta):</p>
+                <ol class="list-decimal list-inside">
+                    <li>Tocca l'icona **Condividi** (<svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 inline-block" viewBox="0 0 20 20" fill="currentColor"><path d="M15 8V5a2 2 0 00-2-2H7a2 2 0 00-2 2v3m0 3-1 9V17a2 2 0 002 2h8a2 2 0 002-2v-3m-6 3V8M9 8h2"/></svg>) in Safari.</li>
+                    <li>Seleziona **Aggiungi alla schermata Home**.</li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="flex justify-center mt-8">
+            <button onclick="logout()" 
+                    class="flex items-center gap-2 px-6 py-2 bg-red-50 text-red-600 border border-red-200 rounded-full text-sm font-bold shadow-sm active:scale-95 transition-all">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
+                Esci
+            </button>
+        </div>
+    </div>
+
+    <script src="config.js"></script>
+    <script src="logic.js"></script>
+
+
+</body>
+</html>

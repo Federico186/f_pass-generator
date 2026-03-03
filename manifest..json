@@ -1,0 +1,21 @@
+{
+  "name": "Password TecnoFerrari",
+  "short_name": "TF Pass",
+  "description": "Generatore chiavi giornaliere",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#064e3b",
+  "theme_color": "#10b981",
+  "icons": [
+    {
+      "src": "logoTecnoFerrari.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "logoTecnoFerrari.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg"
+    }
+  ]
+}

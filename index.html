@@ -54,9 +54,38 @@
 
         /* Stili per le password */
         .password-display {
-             font-size: 1.5rem; /* leggermente più piccolo per evitare overflow su schermi piccoli */
+             font-size: 1.5rem;         /* leggermente più piccolo per evitare overflow su schermi piccoli */
              letter-spacing: 0.05em;
-             min-height: 44px; /* Per evitare salti di layout */
+             min-height: 44px;          /* Per evitare salti di layout */
+             font-family: monospace;
+             font-weight: bold;
+        }
+
+        /* Stili per le label Password 4 e Password 5 */
+        .password-text {
+            position: relative;                     /* Corrisponde a 'relative' */
+            background-color: #f3f4f6;              /* Corrisponde a 'bg-gray-100' */
+            padding: 0.75rem;                       /* Corrisponde a 'p-3' (12px) */
+            border-radius: 0.75rem;                 /* Corrisponde a 'rounded-xl' */
+            border: 2px solid #d1d5db;          /* Corrisponde a 'border-2 border-gray-300' */
+            
+            /* Corrisponde a 'shadow-inner' (Ombra interna per effetto incavo) */
+            box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06); 
+            
+            /* Opzionale: aggiungi font-mono e bold qui se vuoi che tutto il contenuto li erediti */
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+            font-weight: 700;
+        }
+
+        .password-label-titolo {
+            display: block;               /* Corrisponde a 'block' */
+            font-size: 0.875rem;          /* Corrisponde a 'text-sm' (14px) */
+            font-weight: 500;             /* Corrisponde a 'font-medium' */
+            color: #374151;             /* Corrisponde a 'text-gray-700' */
+            margin-bottom: 0.25rem;       /* Corrisponde a 'mb-1' (4px) */
+            text-align: left;             /* Corrisponde a 'text-left' */
+            letter-spacing: -0.01em;      /* Tipico del font San Francisco di iOS */
+            text-transform: uppercase;    /* Opzionale: rende tutto maiuscolo per un look più tecnico */
         }
 
         /* Stile per i pulsanti di navigazione (fissi in alto) */
@@ -70,7 +99,7 @@
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             display: flex;
         }
-        
+        /* Stile per il pulsante non attivo */
         .tab-button {
             flex-grow: 1;
             padding: 1rem;
@@ -95,6 +124,41 @@
             font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
             color: brown;
         }
+
+        .btn-primary {
+            /* Layout e Dimensioni */
+            width: 100%;                  /* w-full */
+            padding: 1rem 2rem;           /* py-4 (16px) px-8 (32px) */
+            display: block;
+            
+            /* Colori e Testo */
+            background-color: brown;    /* bg-emerald-600 */
+            color: white;                 /* text-white */
+            font-weight: 800;             /* font-extrabold */
+            font-size: 1.25rem;           /* text-xl (20px) */
+            text-align: center;
+            border: none;                 /* Rimuove bordo di default del bottone */
+            
+            /* Forma e Ombra */
+            border-radius: 1rem;          /* rounded-2xl (16px) */
+            /* shadow-lg con colore azzurrino (shadow-blue-200) */
+            box-shadow: 0 10px 15px -3px rgba(191, 219, 254, 0.4), 
+                        0 4px 6px -2px rgba(191, 219, 254, 0.2);
+            
+            /* Animazioni e Transizioni */
+            transition: all 0.2s ease;    /* transition-all */
+            cursor: pointer;
+        }
+
+        /* Effetto al passaggio del mouse (PC) */
+        .btn-primary:hover {
+            background-color: rgb(126, 19, 19);    /* hover:bg-emerald-700 */
+        }
+
+        /* Effetto al tocco (iPhone/Mobile) */
+        .btn-primary:active {
+            transform: scale(0.95);       /* active:scale-95 (si rimpicciolisce leggermente) */
+        }
     </style>
 </head>
 
@@ -102,8 +166,8 @@
 
     <!-- INSERIMENTO PIN -->
     <div id="pin-screen" style="display: none;" class="fixed inset-0 z-[100] bg-emerald-900 flex flex-col items-center justify-center p-6 text-white">
-        <img src="logoTecnoFerrari.jpg" class="w-32 mb-8 rounded-2xl shadow-lg">
-        <h2 class="text-2xl font-bold mb-4">Accesso Protetto</h2>
+        <img src="logoTecnoFerrari.jpg" class="w-40 mb-8 rounded-2xl shadow-lg">
+        <h2 class="text-2xl font-bold mb-4">Inserire PIN</h2>
         <input type="password" id="pin-input" inputmode="numeric" 
             class="w-48 p-4 text-center text-3xl text-black rounded-xl mb-6" placeholder="****">
         <button onclick="checkPin()" class="bg-emerald-500 py-3 px-10 rounded-full font-bold shadow-lg">SBLOCCA</button>
@@ -113,21 +177,17 @@
     <!-- TASTO GENERA PASSWORD -->
     <div id="welcome-screen" style="display: none;" class="fixed inset-0 z-[90] bg-gray-100 flex flex-col items-center justify-center p-6" style="display: none;">
         <div class="card-bg p-8 rounded-3xl shadow-xl text-center max-w-sm border-b-4 border-emerald-500">
-            <h1 class="text-2xl font-bold text-gray-800 mb-2">Benvenuto</h1>       
-            <button onclick="goToMainPage()" 
-                    class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold py-4 px-8 rounded-2xl shadow-blue-200 shadow-lg transition-all active:scale-95 text-xl">
-                GENERA PASSWORD
-            </button>
+            <button onclick="goToMainPage()" class="btn-primary">GENERA PASSWORD</button>
         </div>
     </div>
 
     <!-- BARRA DI NAVIGAZIONE A TASTI FISSI -->
     <div class="tab-bar">
-        <div class="tab-button active" onclick="showPage('page-first', this)" id="btn-page-first">Prima Edizione</div>
-        <div class="tab-button" onclick="showPage('page-second', this)" id="btn-page-second">Seconda Edizione</div>
+        <div class="tab-button active" onclick="showPage('page-first', this)" id="btn-page-first">Modilità 1</div>
+        <div class="tab-button" onclick="showPage('page-second', this)" id="btn-page-second">Modalità 2</div>
     </div>
 
-    <div class="container p-4 pb-10">
+    <div class="container mx-auto p-6 pt-28">
         <!-- Struttura della Card Base -->
         <div class="card-bg p-6 md:p-10 rounded-3xl shadow-2xl w-full max-w-sm text-center border-t-8 border-emerald-500">
             
@@ -142,29 +202,27 @@
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
-                    <input type="datetime-local" id="manualDate" onchange="updateFromManual()" 
-                        class="absolute inset-0 opacity-0 cursor-pointer">
+                    <input type="datetime-local" id="manualDate" onchange="updateFromManual()" class="absolute inset-0 opacity-0 cursor-pointer">
                 </div>
                 
                 <p class="text-lg text-gray-600 font-semibold" id="dateDisplay">Caricamento...</p>
             </div>
             
-            <!-- PAGINA 1: PRIMA EDIZIONE -->
+            <!-- PAGINA 1: MODALITA' 1 -->
             <div id="page-first" class="page-content w-full" style="display: block;">
-                <h2 class="text-xl font-bold text-gray-800 mb-4 text-center">Chiave 1 (Prima Edizione)</h2>
                 <div class="space-y-4">
                     
-                    <!-- PASSWORD 4 - PRIMA EDIZIONE -->
-                    <label class="block text-sm font-medium text-gray-700 mb-1 text-left">Password 4 (Data):</label>
-                    <div class="relative bg-gray-100 p-3 rounded-xl border-2 border-gray-300 shadow-inner">     
-                        <span id="password_4_Display_first" class="password-display font-mono font-bold text-gray-800 break-all select-all"></span>
+                    <!-- PASSWORD 4 - MODALITA' 1 -->
+                    <label class="password-label-titolo">Password 4:</label>
+                    <div class="password-text">     
+                        <span id="password_4_Display_first" class="password-display"></span>
                     </div>
 
-                    <!-- PASSWORD 5 - PRIMA EDIZIONE -->
+                    <!-- PASSWORD 5 - MODALITA' 1 -->
                      <div class="admin-only">
-                        <label class="block text-sm font-medium text-gray-700 mb-1 text-left">Password 5 (Data+Ora):</label>
-                        <div class="relative bg-gray-100 p-3 rounded-xl border-2 border-gray-300 shadow-inner">     
-                            <span id="password_5_Display_first" class="password-display font-mono font-bold text-gray-800"></span>
+                        <label class="password-label-titolo">Password 5:</label>
+                        <div class="password-text">     
+                            <span id="password_5_Display_first" class="password-display"></span>
                         </div>
                     </div>
                 </div>
@@ -176,22 +234,21 @@
                 </button>-->
             </div>
 
-            <!-- PAGINA 2: SECONDA EDIZIONE -->
+            <!-- PAGINA 2: MODALITA' 2 -->
             <div id="page-second" class="page-content w-full" style="display: none;">
-                <h2 class="text-xl font-bold text-gray-800 mb-4 text-center">Chiave 2 (Seconda Edizione)</h2>
                 <div class="space-y-4">
                     
-                    <!-- PASSWORD 4 - SECONDA EDIZIONE -->
-                    <label class="block text-sm font-medium text-gray-700 mb-1 text-left">Password 4 (Servizio):</label>
-                    <div class="relative bg-gray-100 p-3 rounded-xl border-2 border-gray-300 shadow-inner">     
-                        <span id="password_4_Display_second" class="password-display font-mono font-bold text-gray-800 break-all select-all"></span>
+                    <!-- PASSWORD 4 - MODALITA' 2 -->
+                    <label class="password-label-titolo">Password 4:</label>
+                    <div class="password-text">     
+                        <span id="password_4_Display_second" class="password-display"></span>
                     </div>
 
-                    <!-- PASSWORD 5 - SECONDA EDIZIONE -->
+                    <!-- PASSWORD 5 - MODALITA' 2 -->
                     <div class="admin-only">
-                        <label class="block text-sm font-medium text-gray-700 mb-1 text-left">Password 5 (Servizio):</label>
-                        <div class="relative bg-gray-100 p-3 rounded-xl border-2 border-gray-300 shadow-inner">     
-                            <span id="password_5_Display_second" class="password-display font-mono font-bold text-gray-800"></span>
+                        <label class="password-label-titolo">Password 5:</label>
+                        <div class="password-text">     
+                            <span id="password_5_Display_second" class="password-display"></span>
                         </div>
                     </div>
                 </div>
